@@ -11,6 +11,11 @@ namespace VibrantCode.Podrace.Model
     public class Racefile : IEquatable<Racefile>
     {
         /// <summary>
+        /// Gets the name of this Race.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets a list of Kubernetes Configs to be applied to the cluster before running the benchmark.
         /// </summary>
         public IList<string> Configs { get; } = new List<string>();
@@ -42,7 +47,7 @@ namespace VibrantCode.Podrace.Model
                 return true;
             }
 
-            return Configs.SequenceEqual(other.Configs) && Warmup.SequenceEqual(other.Warmup) && Benchmark.SequenceEqual(other.Benchmark) && Collectors.SequenceEqual(other.Collectors);
+            return Equals(Name, other.Name) && Configs.SequenceEqual(other.Configs) && Warmup.SequenceEqual(other.Warmup) && Benchmark.SequenceEqual(other.Benchmark) && Collectors.SequenceEqual(other.Collectors);
         }
 
         public override bool Equals(object obj)
@@ -63,6 +68,7 @@ namespace VibrantCode.Podrace.Model
         public override int GetHashCode()
         {
             var hash = new HashCodeCombiner();
+            hash.Add(Name);
             hash.Add(Configs);
             hash.Add(Warmup);
             hash.Add(Benchmark);

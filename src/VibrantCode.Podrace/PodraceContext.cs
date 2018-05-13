@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using VibrantCode.Podrace.Model;
@@ -6,13 +7,16 @@ namespace VibrantCode.Podrace
 {
     public class PodraceContext
     {
+        public string Name { get; }
         public string RootPath { get; }
         public Racefile Racefile { get; }
 
         public PodraceContext(string rootPath, Racefile racefile)
         {
-            RootPath = rootPath;
-            Racefile = racefile;
+            RootPath = rootPath ?? throw new ArgumentNullException(nameof(rootPath));
+            Racefile = racefile ?? throw new ArgumentNullException(nameof(racefile));
+
+            Name = string.IsNullOrEmpty(Racefile.Name) ? Path.GetFileName(RootPath) : Racefile.Name;
         }
 
         public static Task<PodraceContext> LoadAsync(string path)

@@ -14,7 +14,10 @@ namespace VibrantCode.Podrace
 
         public async Task OnExecuteAsync(IConsole console)
         {
-            var context = await PodraceContext.LoadAsync(BasePath);
+            var context =
+                await PodraceContext.LoadAsync(string.IsNullOrEmpty(BasePath)
+                    ? Directory.GetCurrentDirectory()
+                    : BasePath);
 
             console.WriteLine($"Root Path: {context.RootPath}");
             console.WriteLine();

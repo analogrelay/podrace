@@ -33,6 +33,16 @@ namespace VibrantCode.Podrace.Model
                 {
                     switch (pair.Key)
                     {
+                        case YamlScalarNode s when s.Value == "name":
+                            if (pair.Value is YamlScalarNode name)
+                            {
+                                racefile.Name = name.Value;
+                            }
+                            else
+                            {
+                                throw new FormatException("Invalid non-scalar value for 'name'.");
+                            }
+                            break;
                         case YamlScalarNode s when s.Value == "configs":
                             ProcessConfigs(pair.Value, racefile.Configs);
                             break;

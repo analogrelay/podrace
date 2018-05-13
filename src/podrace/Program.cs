@@ -2,12 +2,14 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using VibrantCode.Podrace.Commands;
 
 namespace VibrantCode.Podrace
 {
     [Command(Name = "Podrace", Description = "Generic benchmarking via Kubernetes")]
     [Subcommand(DescribeCommand.Name, typeof(DescribeCommand))]
+    [Subcommand(RunCommand.Name, typeof(RunCommand))]
     internal class Program : ContainerCommandBase
     {
         public static int Main(string[] args)
@@ -21,7 +23,15 @@ namespace VibrantCode.Podrace
                 Console.ReadLine();
             }
 #endif
-            return CommandLineApplication.Execute<Program>(args);
+            var services = new ServiceCollection()
+                .AddLogging(logging => logging.AddCliConsole())
+                .BuildServiceProvider();
+
+            var app = new CommandLineApplication<Program>();
+            app.Conventions
+                .UseDefaultConventions()
+                .UseConstructorInjection(services);
+            return app.Execute(args);
         }
     }
 }

@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="KubernetesClient" Version="0.7.0-beta" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0-rc1-final" />
     </ItemGroup>
 
 </Project>
