@@ -3,15 +3,18 @@ kind: Deployment
 metadata:
   name: server
   labels:
+    podrace: "true"
     podrace-role: server
 spec:
   replicas: 1
   selector:
     matchLabels:
+      podrace: "true"
       podrace-role: server
   template:
     metadata:
       labels:
+        podrace: "true"
         podrace-role: server
     spec:
       containers:

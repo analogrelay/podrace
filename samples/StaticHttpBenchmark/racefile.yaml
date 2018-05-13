@@ -7,8 +7,9 @@ warmup:
   command: [ "wrk", "-c", "10", "-d", "5s", "http://server.default.svc.cluster.local/" ]
 benchmark:
 - role: "client"
-  command: [ "wrk", "-c", "10", "-d", "5s", "http://server.default.svc.cluster.local/", ">", "/client.wrk.log" ]
+  # Run the command in 'sh' so we can redirect the output.
+  command: [ "/bin/sh", "-c", "wrk -c 10 -d 5s http://server.default.svc.cluster.local/ > /data/client.wrk.log" ]
 collectors:
 - type: "file"
   role: "client"
-  source: "client.wrk.log"
+  source: "/data/client.wrk.log"

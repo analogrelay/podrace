@@ -83,18 +83,47 @@ namespace VibrantCode.Podrace.Internal
             };
 
             // Hook the events
+            var stdoutBuilder = new StringBuilder();
+            var stderrBuilder = new StringBuilder();
+            var stdoutFinished = new TaskCompletionSource<string>();
+            var stderrFinished = new TaskCompletionSource<string>();
+            process.OutputDataReceived += (sender, a) =>
+            {
+                if (a.Data == null)
+                {
+                    stdoutFinished.TrySetResult(stdoutBuilder.ToString());
+                }
+                else
+                {
+                    _logger.LogTrace("stdout: {Line}", a.Data);
+                    stdoutBuilder.AppendLine(a.Data);
+                }
+            };
+            process.ErrorDataReceived += (sender, a) =>
+            {
+                if (a.Data == null)
+                {
+                    stderrFinished.TrySetResult(stderrBuilder.ToString());
+                }
+                else
+                {
+                    _logger.LogTrace("stderr: {Line}", a.Data);
+                    stderrBuilder.AppendLine(a.Data);
+                }
+            };
+
             process.Exited += async (sender, a) =>
             {
                 _logger.LogDebug("< kubectl {Arguments} (exit code: {ExitCode})", argString, process.ExitCode);
                 if (process.ExitCode == 0)
                 {
                     // Success!
-                    tcs.TrySetResult(await process.StandardOutput.ReadToEndAsync());
+                    tcs.TrySetResult(await stdoutFinished.Task);
                 }
                 else
                 {
                     // Failure :(
-                    var stderr = await process.StandardError.ReadToEndAsync();
+                    var stderr = await stderrFinished.Task;
                     _logger.LogError(stderr.Trim());
                     tcs.TrySetException(new Exception($"A Kubernetes command failed. See the log for details."));
                 }
@@ -102,6 +131,8 @@ namespace VibrantCode.Podrace.Internal
 
             _logger.LogDebug("> kubectl {Arguments}", argString);
             process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
             return tcs.Task;
         }

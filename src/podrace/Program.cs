@@ -11,6 +11,7 @@ namespace VibrantCode.Podrace
     [Command(Name = "Podrace", Description = "Generic benchmarking via Kubernetes")]
     [Subcommand(DescribeCommand.Name, typeof(DescribeCommand))]
     [Subcommand(RunCommand.Name, typeof(RunCommand))]
+    [Subcommand(CleanCommand.Name, typeof(CleanCommand))]
     internal class Program : ContainerCommandBase
     {
         public static int Main(string[] args)

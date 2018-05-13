@@ -8,8 +8,6 @@ namespace VibrantCode.Podrace.Model
     /// </summary>
     public class FileCollector : Collector, IEquatable<Collector>, IEquatable<FileCollector>
     {
-        private string _destination;
-
         /// <summary>
         /// Gets or sets the Role from which to copy the file.
         /// </summary>
@@ -24,13 +22,9 @@ namespace VibrantCode.Podrace.Model
         public string Source { get; set; }
 
         /// <summary>
-        /// Gets or sets the path to which the file will be copied. Defaults to the value of <see cref="Source"/>.
+        /// Gets or sets the path to which the file will be copied.
         /// </summary>
-        public string Destination
-        {
-            get => _destination ?? Source;
-            set => _destination = value;
-        }
+        public string Destination { get; set; }
 
         public bool Equals(FileCollector other)
         {

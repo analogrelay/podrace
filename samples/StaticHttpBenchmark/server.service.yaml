@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: server
   labels:
+    podrace: "true"
     podrace-role: server
 spec:
   selector:
+    podrace: "true"
     podrace-role: server
   ports:
   - name: http
