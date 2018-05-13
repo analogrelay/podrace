@@ -85,7 +85,7 @@ namespace VibrantCode.Podrace
                 case LogLevel.Information:
                     return ("info", ConsoleColor.DarkGreen, ConsoleColor.Black);
                 case LogLevel.Debug:
-                    return ("dbug", ConsoleColor.Gray, ConsoleColor.Black);
+                    return ("dbug", ConsoleColor.Magenta, ConsoleColor.Black);
                 case LogLevel.Trace:
                     return ("trce", ConsoleColor.Gray, ConsoleColor.Black);
                 default:

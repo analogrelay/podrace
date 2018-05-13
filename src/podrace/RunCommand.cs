@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using k8s;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -16,12 +15,6 @@ namespace VibrantCode.Podrace
 
         [Option("-p|--path <PATH>", CommandOptionType.SingleValue, Description = "The path containing the Racefile and configs to run.")]
         public string BasePath { get; set; }
-
-        [Option("--config <CONFIGFILE>", CommandOptionType.SingleValue, Description = "The path to a Kubernetes config file to use.")]
-        public string KubernetesConfig { get; set; }
-
-        [Option("--context <CONTEXT>", CommandOptionType.SingleValue, Description = "The name of a Kubernetes context.")]
-        public string Context { get; set; }
 
         public RunCommand(ILoggerFactory loggerFactory)
         {
@@ -38,14 +31,20 @@ namespace VibrantCode.Podrace
                         ? Directory.GetCurrentDirectory()
                         : BasePath);
 
-                // If KubernetesConfig is null, this will load the default config!
-                var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(KubernetesConfig, Context);
-
                 // Create a Race session
-                var race = new PodraceSession(podraceContext, config, _loggerFactory);
+                var race = new PodraceSession(podraceContext, _loggerFactory);
 
                 // Deploy the race
                 await race.DeployAsync();
+                try
+                {
+                    // TODO: Warmup
+                    // TODO: Benchmark
+                }
+                finally
+                {
+                    await race.RemoveAsync();
+                }
 
                 return 0;
             }

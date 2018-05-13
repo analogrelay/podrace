@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using VibrantCode.Podrace.Commands;
 
 namespace VibrantCode.Podrace
@@ -15,16 +16,21 @@ namespace VibrantCode.Podrace
         public static int Main(string[] args)
         {
 #if DEBUG
-            if (args.Length > 0 && string.Equals("--debug", args[0], StringComparison.OrdinalIgnoreCase))
+            if (args.Any(a => string.Equals("--debug", a, StringComparison.OrdinalIgnoreCase)))
             {
-                args = args.Skip(1).ToArray();
+                args = args.Where(a => !string.Equals("--debug", a, StringComparison.Ordinal)).ToArray();
                 Console.WriteLine("Waiting for debugger to attach. Press ENTER to continue.");
                 Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
                 Console.ReadLine();
             }
 #endif
+
             var services = new ServiceCollection()
-                .AddLogging(logging => logging.AddCliConsole())
+                .AddLogging(logging =>
+                {
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                    logging.AddCliConsole();
+                })
                 .BuildServiceProvider();
 
             var app = new CommandLineApplication<Program>();
