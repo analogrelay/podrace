@@ -7,7 +7,8 @@ Benchmarking using Kubernetes
 ## Quick Example:
 
 1. Configure local `kubectl` to point at a Kubernetes cluster. Docker for Windows Edge comes with Kuberetes now: https://docs.docker.com/docker-for-windows/#kubernetes
-2. Run `./podrace.cmd run -p ./samples/StaticHttpBenchmark` (`podrace.cmd` just does a `dotnet run` on `src/podrace`, no building necessary)
+2. Run `./podrace.cmd run -p ./samples/StaticHttpBenchmark -o ./out` (`podrace.cmd` just does a `dotnet run` on `src/podrace`, no building necessary)
+3. The output from `wrk` (unparsed, right now) from each client is dumped into `./out`
 
 Once that works, you can point `kubectl` at an Azure Kubernetes Service instance and run the exact same benchmark in the cloud! Or build a physical Kubernetes cluster and run it there.
 
