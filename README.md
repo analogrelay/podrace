@@ -47,3 +47,15 @@ A `file` Collector has a `type` value of `file`. There are three additional para
 * `destination`: An optional relative path within the output directory in which to place the file.
 
 Note: The output directory is layed out with a directory for each Pod. So if the file collector is extracting the file `foobar.txt` from Pod `client-abc123`, it will end up in `<Output Directory>/client-abc123/foobar.txt`
+   
+## Next Steps
+
+1. Drop the requirement for Kubernetes configurations (let the `racefile.yaml` contain container names, etc.)
+1. Automatic node anti-affinity for Pods (don't want the server and the client on the same node, that would be bad!)
+1. Integrate with Dockerfiles to allow building containers rather than requiring pre-built images
+1. Add better support for aggregating data and publishing it
+1. Add support for a SignalR-based signalling system to trigger runs.
+1. Examples:
+  * Kestrel Plaintext
+  * SignalR
+  * SignalR + Redis (easier with Kubernetes!!)
