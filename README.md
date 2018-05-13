@@ -2,6 +2,8 @@
 
 Benchmarking using Kubernetes
 
+![Podrace Scene from Star Wars Episode 1](https://i.gifer.com/8mpf.gif)
+
 ## Quick Example:
 
 1. Configure local `kubectl` to point at a Kubernetes cluster. Docker for Windows Edge comes with Kuberetes now: https://docs.docker.com/docker-for-windows/#kubernetes
