@@ -1,3 +1,6 @@
+// Conditional compilation flags so that if this file gets copied around it still works.
+#if NETCOREAPP2_2 || NETCOREAPP3_0
+#else
 // Copied from https://github.com/dotnet/corefx/blob/77096755443730962810662501f82550fdb4656d/src/Common/src/CoreLib/System/HashCode.cs
 
 // Licensed to the .NET Foundation under one or more agreements.
@@ -430,3 +433,4 @@ namespace System
 #pragma warning restore 0809
     }
 }
+#endif

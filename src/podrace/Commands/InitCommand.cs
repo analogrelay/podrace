@@ -1,7 +1,7 @@
 using McMaster.Extensions.CommandLineUtils;
 using System.Threading.Tasks;
 
-namespace Podrace.Commands
+namespace VibrantCode.Podrace.Commands
 {
     [Command(Name, Description = "Initialize a new racefile in the current directory")]
     internal class InitCommand

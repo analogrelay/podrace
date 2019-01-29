@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Internal;
 
 namespace VibrantCode.Podrace.Model
 {
@@ -16,9 +15,9 @@ namespace VibrantCode.Podrace.Model
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets a list of Kubernetes Configs to be applied to the cluster before running the benchmark.
+        /// Gets a list of <see cref="Role"/> objects representing the agents to deploy.
         /// </summary>
-        public IList<string> Configs { get; } = new List<string>();
+        public IList<Role> Roles { get; }
 
         /// <summary>
         /// Gets a list of <see cref="Lap"/> objects representing the steps to take during warmup.
@@ -47,7 +46,7 @@ namespace VibrantCode.Podrace.Model
                 return true;
             }
 
-            return Equals(Name, other.Name) && Configs.SequenceEqual(other.Configs) && Warmup.SequenceEqual(other.Warmup) && Benchmark.SequenceEqual(other.Benchmark) && Collectors.SequenceEqual(other.Collectors);
+            return Equals(Name, other.Name) && Roles.SequenceEqual(other.Roles) && Warmup.SequenceEqual(other.Warmup) && Benchmark.SequenceEqual(other.Benchmark) && Collectors.SequenceEqual(other.Collectors);
         }
 
         public override bool Equals(object obj)
@@ -65,15 +64,6 @@ namespace VibrantCode.Podrace.Model
             return obj is Racefile r && Equals(r);
         }
 
-        public override int GetHashCode()
-        {
-            var hash = new HashCodeCombiner();
-            hash.Add(Name);
-            hash.Add(Configs);
-            hash.Add(Warmup);
-            hash.Add(Benchmark);
-            hash.Add(Collectors);
-            return hash;
-        }
+        public override int GetHashCode() => HashCode.Combine(Name, Roles, Warmup, Benchmark, Collectors);
     }
 }

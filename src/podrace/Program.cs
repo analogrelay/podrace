@@ -2,7 +2,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Podrace.Commands;
 using System.Threading.Tasks;
 
-namespace Podrace
+namespace VibrantCode.Podrace
 {
     [Command(Name = "podrace", Description = "Flexible benchmarking with docker.")]
     [Subcommand(typeof(InitCommand))]
