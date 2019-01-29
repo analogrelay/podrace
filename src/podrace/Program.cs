@@ -1,44 +1,19 @@
-using System;
-using System.Diagnostics;
-using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using VibrantCode.Podrace.Commands;
+using Podrace.Commands;
+using System.Threading.Tasks;
 
-namespace VibrantCode.Podrace
+namespace Podrace
 {
-    [Command(Name = "Podrace", Description = "Generic benchmarking via Kubernetes")]
-    [Subcommand(DescribeCommand.Name, typeof(DescribeCommand))]
-    [Subcommand(RunCommand.Name, typeof(RunCommand))]
-    [Subcommand(CleanCommand.Name, typeof(CleanCommand))]
-    internal class Program : ContainerCommandBase
+    [Command(Name = "podrace", Description = "Flexible benchmarking with docker.")]
+    [Subcommand(typeof(InitCommand))]
+    internal class Program
     {
-        public static int Main(string[] args)
+        internal static int Main(string[] args) => CommandLineApplication.Execute<Program>(args);
+
+        internal int OnExecute(CommandLineApplication app)
         {
-#if DEBUG
-            if (args.Any(a => string.Equals("--debug", a, StringComparison.OrdinalIgnoreCase)))
-            {
-                args = args.Where(a => !string.Equals("--debug", a, StringComparison.Ordinal)).ToArray();
-                Console.WriteLine("Waiting for debugger to attach. Press ENTER to continue.");
-                Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
-                Console.ReadLine();
-            }
-#endif
-
-            var services = new ServiceCollection()
-                .AddLogging(logging =>
-                {
-                    logging.SetMinimumLevel(LogLevel.Debug);
-                    logging.AddCliConsole();
-                })
-                .BuildServiceProvider();
-
-            var app = new CommandLineApplication<Program>();
-            app.Conventions
-                .UseDefaultConventions()
-                .UseConstructorInjection(services);
-            return app.Execute(args);
+            app.ShowHelp();
+            return 0;
         }
     }
 }

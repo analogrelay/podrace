@@ -1,0 +1,19 @@
+roles:
+  server:
+    image: 'nginx:latest'
+  client:
+    image: williamyeh/wrk
+    command: [ "/bin/sh", "-c", "while true; do sleep 2; done" ]
+
+warmup:
+- role: client
+  command: [ "wrk", "-c", "10", "-d", "5s", "http://server/" ]
+
+benchmark:
+- role: client
+  command: [ "/bin/sh", "-c", "wrk -c 10 -d 5s http://server/ > client.wrk.log" ]
+
+collectors:
+- type: file
+  role: client
+  source: "client.wrk.log"
