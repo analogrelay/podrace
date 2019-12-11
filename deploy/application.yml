@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podrace-application
+  labels:
+    podrace-role: application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      podrace-role: application
+  template:
+    metadata:
+      labels:
+        podrace-role: application
+    spec:
+      nodeSelector:
+        agentpool: d3nodes
+      volumes:
+        # An empty-dir volume that the init container will clone the app in to
+        - name: repositories
+          emptyDir: {}
+        - name: apps
+          emptyDir: {}
+
+      ## InitContainers run to completion, in order, before any app containers are launched
+      # [anurse] I'm 90% sure I could do this in one container, just want to try this out
+      initContainers:
+        # Clones the target repo into the directory
+        - name: podrace-server-gitcloner
+          image: "alpine/git"
+          command:
+            [
+              "git",
+              "clone",
+              "https://github.com/aspnet/Benchmarks.git",
+              "/repos/Benchmarks",
+            ]
+          volumeMounts:
+            - mountPath: /repos
+              name: repositories
+        # Builds the benchmark app standalone
+        - name: podrace-server-builder
+          image: "mcr.microsoft.com/dotnet/core/sdk:3.1"
+          command:
+            [
+              "dotnet",
+              "publish",
+              "/repos/Benchmarks/src/Benchmarks",
+              "--runtime",
+              "linux-x64",
+              "--framework",
+              "netcoreapp3.0",
+              "--output",
+              "/apps/Benchmarks",
+            ]
+          volumeMounts:
+            - mountPath: /repos
+              name: repositories
+            - mountPath: /apps
+              name: apps
+
+      ## Containers are the long-running app-specific containers.
+      containers:
+        # Launch the app
+        - name: podrace-server-host
+          image: mcr.microsoft.com/dotnet/core/runtime-deps:3.1
+          workingDir: /apps/Benchmarks
+          livenessProbe:
+            httpGet:
+              path: /plaintext
+              port: 80
+          command:
+            [
+              "./Benchmarks",
+              "--nonInteractive",
+              "true",
+              "--scenarios",
+              "plaintext",
+              "--server",
+              "Kestrel",
+              "--server-urls",
+              "http://*:80",
+              "--kestrelTransport",
+              "Sockets",
+              "--protocol",
+              "http",
+            ]
+          ports:
+            - containerPort: 80
+              hostPort: 80
+          volumeMounts:
+            - mountPath: /apps
+              name: apps

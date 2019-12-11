@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podrace-load
+  labels:
+    podrace-role: load
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      podrace-role: load
+  template:
+    metadata:
+      labels:
+        podrace-role: load
+    spec:
+      nodeSelector:
+        agentpool: d3nodes
+      volumes:
+        # An empty-dir volume that the init container will clone the app in to
+        - name: repositories
+          emptyDir: {}
+
+      ## InitContainers run to completion, in order, before any app containers are launched
+      initContainers:
+        # Clones the Benchmark repo so we get access to the scripts
+        - name: gitcloner
+          image: "alpine/git"
+          command:
+            [
+              "git",
+              "clone",
+              "https://github.com/aspnet/Benchmarks.git",
+              "/repos/Benchmarks",
+            ]
+          volumeMounts:
+            - mountPath: /repos
+              name: repositories
+      containers:
+        # Launch container
+        - name: wrk
+          image: williamyeh/wrk
+          command: ["/bin/sh", "-c", "--", "while true; do sleep 30; done;"]
+          volumeMounts:
+            - mountPath: /repos
+              name: repositories
