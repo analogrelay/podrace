@@ -1,1 +1,1 @@
-wrk --latency -d 15 -c 256 --timeout 2s -t 32 http://aks-d3nodes-32748613-vmss000001/plaintext -s /repos/Benchmarks/scripts/pipeline.lua 16
+wrk --latency -d 15 -c 256 --timeout 2s -t 32 http://NODENAME/plaintext -s /repos/Benchmarks/scripts/pipeline.lua 16

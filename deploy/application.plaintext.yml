@@ -10,10 +10,12 @@ spec:
   selector:
     matchLabels:
       podrace-role: application
+      podrace-scenario: plaintext
   template:
     metadata:
       labels:
         podrace-role: application
+        podrace-scenario: plaintext
     spec:
       ### Podrace common stuff
       # Ensure we aren't co-scheduled with any pod that also part of a race.
