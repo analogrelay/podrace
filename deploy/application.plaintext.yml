@@ -4,6 +4,7 @@ metadata:
   name: podrace-application-plaintext
   labels:
     podrace-role: application
+    podrace-scenario: plaintext
 spec:
   replicas: 1
   selector:

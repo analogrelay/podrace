@@ -4,6 +4,7 @@ metadata:
   name: podrace-application-platform
   labels:
     podrace-role: application
+    podrace-scenario: platform
 spec:
   replicas: 1
   selector:
