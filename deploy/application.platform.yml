@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: podrace-application
+  name: podrace-application-platform
   labels:
     podrace-role: application
 spec:
@@ -14,8 +14,21 @@ spec:
       labels:
         podrace-role: application
     spec:
+      ### Podrace common stuff
+      # Ensure we aren't co-scheduled with any pod that also part of a race.
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                  - key: podrace-role
+                    operator: Exists
+      hostNetwork: true
       nodeSelector:
         agentpool: d3nodes
+      ### End common stuff
+
       volumes:
         # An empty-dir volume that the init container will clone the app in to
         - name: repositories
@@ -46,13 +59,13 @@ spec:
             [
               "dotnet",
               "publish",
-              "/repos/Benchmarks/src/Benchmarks",
+              "/repos/Benchmarks/src/BenchmarksApps/Kestrel/PlatformBenchmarks",
               "--runtime",
               "linux-x64",
               "--framework",
               "netcoreapp3.0",
               "--output",
-              "/apps/Benchmarks",
+              "/apps/PlatformBenchmarks",
             ]
           volumeMounts:
             - mountPath: /repos
@@ -65,27 +78,12 @@ spec:
         # Launch the app
         - name: podrace-server-host
           image: mcr.microsoft.com/dotnet/core/runtime-deps:3.1
-          workingDir: /apps/Benchmarks
+          workingDir: /apps/PlatformBenchmarks
           livenessProbe:
             httpGet:
               path: /plaintext
               port: 80
-          command:
-            [
-              "./Benchmarks",
-              "--nonInteractive",
-              "true",
-              "--scenarios",
-              "plaintext",
-              "--server",
-              "Kestrel",
-              "--server-urls",
-              "http://*:80",
-              "--kestrelTransport",
-              "Sockets",
-              "--protocol",
-              "http",
-            ]
+          command: ["./PlatformBenchmarks"]
           ports:
             - containerPort: 80
               hostPort: 80

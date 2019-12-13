@@ -14,6 +14,22 @@ spec:
       labels:
         podrace-role: load
     spec:
+      ### Podrace common stuff
+      # Ensure we aren't co-scheduled with any pod that also part of a race.
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                  - key: podrace-role
+                    operator: Exists
+      hostNetwork: true
+      nodeSelector:
+        agentpool: d3nodes
+      ### End common stuff
+      
+      hostNetwork: true
       nodeSelector:
         agentpool: d3nodes
       volumes:
