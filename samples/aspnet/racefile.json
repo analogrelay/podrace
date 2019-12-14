@@ -1,0 +1,19 @@
+{
+  "variables": {
+    "header-sets": {
+      "none": "",
+      "plaintext": "--header Accept:text/plain,text/html;q=0.9,application/xhtml+xml;q=0.9,application/xml;q=0.8,*/*;q=0.7 --header Connection:keep-alive",
+      "connection-close": "--header Connection:close"
+    },
+    "preset-headers": "plaintext"
+  },
+  "dependencies": [ "application", "load" ],
+  "roles": { // renamed from "services" because I don't want to confuse with k8s concepts
+    "application": {
+      "source": {
+        "repository": "https://github.com/aspnet/benchmarks.git",
+        "branchOrCommit": "master"
+      }
+    }
+  }
+}
